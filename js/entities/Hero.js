@@ -3,7 +3,7 @@ game.PlayerEntity = me.Entity.extend({
         // call the constructor
         this._super(me.Entity, 'init', [x, y , settings]);
         //X & Y accelerator
-        this.body.setVelocity(3, 15);
+        this.body.setVelocity(7, 17);
         //Follow position
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
         //Actualiza el personaje incluso fuera de la vista
@@ -13,30 +13,46 @@ game.PlayerEntity = me.Entity.extend({
         this.renderable.addAnimation("stand", [0]);
         this.renderable.setCurrentAnimation("stand");
     },
+    moveLeft:function(){
+      //Invierte la imagen
+      this.renderable.flipX(true);
+      //Acceletación
+      this.body.vel.x -= this.body.accel.x * me.timer.tick;
+      //Animación
+      if(!this.renderable.isCurrentAnimation("walk")){
+        this.renderable.setCurrentAnimation("walk");
+
+        console.log("walk");
+      }
+    },
+    moveRight:function(){
+      //Invierte la imagen
+      this.renderable.flipX(false);
+      //Acceletación
+      this.body.vel.x += this.body.accel.x * me.timer.tick;
+
+      //Animación
+      if (!this.renderable.isCurrentAnimation("walk")) {
+        this.renderable.setCurrentAnimation("walk");
+      }
+    },
     update : function (dt) {
+        //Run
+        /*if(me.input.isKeyPressed('run')){
+          this.isRunning=true;
+        }else{
+          this.isRunning=false;
+        }*/
+        //Walk
         if(me.input.isKeyPressed('left')){
-          //Invierte la imagen
-          this.renderable.flipX(true);
-          //Acceletación
-          this.body.vel.x -= this.body.accel.x * me.timer.tick;
-          //Animación
-          if(!this.renderable.isCurrentAnimation("walk")){
-            this.renderable.setCurrentAnimation("walk");
-          }
+          this.moveLeft();
         } else if (me.input.isKeyPressed('right')) {
-          //Invierte la imagen
-          this.renderable.flipX(false);
-          //Acceletación
-          this.body.vel.x += this.body.accel.x * me.timer.tick;
-          //Animación
-          if (!this.renderable.isCurrentAnimation("walk")) {
-            this.renderable.setCurrentAnimation("walk");
-          }
+          this.moveRight();
         } else {
           this.body.vel.x = 0;
-          //Animación
           this.renderable.setCurrentAnimation("stand");
         }
+        //Jump
         if(me.input.isKeyPressed("jump")){
           //Verifica que está tocando el suelo
           if(!this.body.jumping && !this.body.falling){
@@ -70,23 +86,13 @@ game.PlayerEntity = me.Entity.extend({
               }
               return false;
             }else if (other.type === "hole") {
-              me.levelDirector.loadLevel("area03");
+              me.levelDirector.loadLevel("area05");
               return true;
             }
           break;
           case me.collision.types.ENEMY_OBJECT:
-            if ((response.overlapV.y>0) && !this.body.jumping) {
-              // bounce (force jump)
-              this.body.falling = false;
-              this.body.vel.y = -this.body.maxVel.y * me.timer.tick;
-              // set the jumping flag
-              this.body.jumping = true;
-              me.audio.play("stomp");
-              me.game.world.removeChild(response.b);
-            } else if(this.body.falling){
-              // let's flicker in case we touched an enemy
-              this.renderable.flicker(750);
-            }
+            //me.game.world.removeChild(response.b);
+            me.levelDirector.loadLevel("area05");
             return false;
           break;
           default:

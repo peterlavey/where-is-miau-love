@@ -49,12 +49,12 @@ var game = {
         me.pool.register("hero", game.PlayerEntity);
         me.pool.register("coin", game.CoinEntity);
         me.pool.register("enemy", game.EnemyEntity);
-        me.pool.register("death", game.DeathEntity);
+        me.pool.register("fly", game.FlyEntity);
 
         me.input.bindKey(me.input.KEY.LEFT, "left");
         me.input.bindKey(me.input.KEY.RIGHT, "right");
-        me.input.bindKey(me.input.KEY.X, "jump", true);
-
+        me.input.bindKey(me.input.KEY.UP, "jump", true);
+        me.input.bindKey(me.input.KEY.SHIFT, "run", true);
         // Start the game.
         me.state.change(me.state.MENU);
     }
